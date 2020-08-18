@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:restro/helpers/style.dart';
 import 'package:restro/models/product.dart';
 
@@ -154,7 +153,7 @@ class ProductWidget extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(right: 8.0),
                         child: CustomText(
-                          text: "\$${product.price / 100}",
+                          text: "\$${product.price}",
                           weight: FontWeight.bold,
                         ),
                       ),

@@ -4,8 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:restro/helpers/order.dart';
+import 'package:restro/helpers/product.dart';
+import 'package:restro/helpers/restaurant.dart';
+import 'package:restro/models/cartItem.dart';
 import 'package:restro/models/order.dart';
-import 'package:uuid/uuid.dart';
+import 'package:restro/models/product.dart';
+import 'package:restro/models/restaurant.dart';
 
 enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
 
@@ -15,10 +19,18 @@ class UserProvider with ChangeNotifier {
   Status _status = Status.Uninitialized;
   Firestore _firestore = Firestore.instance;
   OrderServices _orderServices = OrderServices();
+  RestaurantServices _restaurantServices = RestaurantServices();
 
+  ProductServices _productServices = ProductServices();
+
+  int _totalSales = 0;
+  RestaurantModel _restaurant;
+  List<ProductModel> productsByRestaurant = [];
 //  getter
   Status get status => _status;
   FirebaseUser get user => _user;
+  RestaurantModel get restaurant => _restaurant;
+  int get totalSales => _totalSales;
 
   // public variables
   List<OrderModel> orders = [];
@@ -56,12 +68,15 @@ class UserProvider with ChangeNotifier {
           .createUserWithEmailAndPassword(
               email: email.text.trim(), password: password.text.trim())
           .then((result) {
-        _firestore.collection('users').document(result.user.uid).setData({
+        _firestore.collection('restaurants').document(result.user.uid).setData({
           'name': name.text,
           'email': email.text,
-          'uid': result.user.uid,
-          "likedFood": [],
-          "likedRestaurants": []
+          'id': result.user.uid,
+          "avgPrice": 0.0,
+          "image": "",
+          "rating": 0.0,
+          "popular": false,
+          "rates": 0
         });
       });
       return true;
@@ -86,10 +101,10 @@ class UserProvider with ChangeNotifier {
     email.text = "";
   }
 
-//  Future<void> reloadUserModel()async{
-//    _userModel = await _userServicse.getUserById(user.uid);
-//    notifyListeners();
-//  }
+  Future<void> reload() async {
+    _restaurant = await _restaurantServices.getRestaurantById(id: user.uid);
+    notifyListeners();
+  }
 
   Future<void> _onStateChanged(FirebaseUser firebaseUser) async {
     if (firebaseUser == null) {
@@ -97,13 +112,28 @@ class UserProvider with ChangeNotifier {
     } else {
       _user = firebaseUser;
       _status = Status.Authenticated;
-//      _userModel = await _userServicse.getUserById(user.uid);
+
+      await loadProductsByRestaurant(restaurantId: user.uid);
+      await getOrders();
+      await getTotalSales();
+      _restaurant = await _restaurantServices.getRestaurantById(id: user.uid);
     }
     notifyListeners();
   }
 
   getOrders() async {
-    orders = await _orderServices.getUserOrders(userId: _user.uid);
+    orders = await _orderServices.getRestaurantOrders(restaurantId: _user.uid);
+    notifyListeners();
+  }
+
+  getTotalSales() async {
+    for (OrderModel order in orders) {
+      for (CartItemModel item in order.cart) {
+        if (item.restaurantId == user.uid) {
+          _totalSales = _totalSales + item.totalRestaurantSale;
+        }
+      }
+    }
     notifyListeners();
   }
 
@@ -117,5 +147,11 @@ class UserProvider with ChangeNotifier {
       print("THE ERROR ${e.toString()}");
       return false;
     }
+  }
+
+  Future loadProductsByRestaurant({String restaurantId}) async {
+    productsByRestaurant =
+        await _productServices.getProductsByRestaurant(id: restaurantId);
+    notifyListeners();
   }
 }

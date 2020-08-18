@@ -5,6 +5,22 @@ class ProductServices {
   String collection = "products";
   Firestore _firestore = Firestore.instance;
 
+  Future createProduct({Map data}) {
+    _firestore.collection(collection).document(data['id']).setData({
+      "id": data["id"],
+      "image": data["image"],
+      "rates": data["rates"],
+      "rating": data["rating"],
+      "price": data["price"],
+      "restaurant": data["restaurant"],
+      "restaurantId": data["restaurantId"],
+      "category": data["category"],
+      "description": data["description"],
+      "featured": data["featured"],
+      "name": data["name"]
+    });
+  }
+
   Future<List<ProductModel>> getProducts() async =>
       _firestore.collection(collection).getDocuments().then((result) {
         List<ProductModel> products = [];

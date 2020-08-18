@@ -10,9 +10,7 @@ class RestaurantModel {
   static const POPULAR = "popular";
   static const USER_LIKES = "userLikes";
 
-
-
-  int _id;
+  String _id;
   String _name;
   String _image;
   List<String> _userLikes;
@@ -22,7 +20,7 @@ class RestaurantModel {
   int _rates;
 
 //  getters
-  int get id => _id;
+  String get id => _id;
 
   String get name => _name;
 
@@ -40,7 +38,6 @@ class RestaurantModel {
 
   // public variable
   bool liked = false;
-
 
   RestaurantModel.fromSnapshot(DocumentSnapshot snapshot) {
     _id = snapshot.data[ID];

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:restro/helpers/screen_navigation.dart';
 import 'package:restro/helpers/style.dart';
+import 'package:restro/providers/product.dart';
+import 'package:restro/providers/user.dart';
+import 'package:restro/screens/addProduct.dart';
 import 'package:restro/widgets/custom_text.dart';
+import 'package:restro/widgets/product.dart';
 import 'package:restro/widgets/small_floating_button.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -10,7 +15,8 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-//    final productProvider = Provider.of<ProductProvider>(context);
+    final productProvider = Provider.of<ProductProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
     bool hasImage = false;
 
     return Scaffold(
@@ -19,7 +25,7 @@ class DashboardScreen extends StatelessWidget {
         elevation: 0.5,
         backgroundColor: primary,
         title: CustomText(
-          text: "Sales: \$12.99",
+          text: "Sales: ₹${userProvider.totalSales}",
           color: white,
         ),
         actions: <Widget>[],
@@ -30,13 +36,13 @@ class DashboardScreen extends StatelessWidget {
             UserAccountsDrawerHeader(
               decoration: BoxDecoration(color: primary),
               accountName: CustomText(
-                text: "Santos Corner",
+                text: userProvider.restaurant.name,
                 color: white,
                 weight: FontWeight.bold,
                 size: 18,
               ),
               accountEmail: CustomText(
-                text: "admin@admin.com",
+                text: userProvider.user.email,
                 color: white,
               ),
             ),
@@ -44,6 +50,11 @@ class DashboardScreen extends StatelessWidget {
               onTap: () {},
               leading: Icon(Icons.home),
               title: CustomText(text: "Home"),
+            ),
+            ListTile(
+              onTap: () {},
+              leading: Icon(Icons.restaurant),
+              title: CustomText(text: "Restaurant"),
             ),
           ],
         ),
@@ -98,7 +109,7 @@ class DashboardScreen extends StatelessWidget {
                   child: Align(
                       alignment: Alignment.bottomLeft,
                       child: CustomText(
-                        text: 'Santos Corner',
+                        text: userProvider.restaurant.name,
                         color: white,
                         size: 24,
                         weight: FontWeight.normal,
@@ -111,7 +122,8 @@ class DashboardScreen extends StatelessWidget {
                   child: Align(
                       alignment: Alignment.bottomLeft,
                       child: CustomText(
-                        text: "Average Price: \$5.5",
+                        text:
+                            "Average Price: ₹${userProvider.restaurant.avgPrice}",
                         color: white,
                         size: 16,
                         weight: FontWeight.w300,
@@ -166,7 +178,7 @@ class DashboardScreen extends StatelessWidget {
                                 size: 20,
                               ),
                             ),
-                            Text("4.5"),
+                            Text(".."),
                           ],
                         ),
                       ),
@@ -216,7 +228,7 @@ class DashboardScreen extends StatelessWidget {
                       size: 24,
                     ),
                     trailing: CustomText(
-                      text: "30",
+                      text: userProvider.orders.length.toString(),
                       size: 24,
                       weight: FontWeight.bold,
                     )),
@@ -248,29 +260,43 @@ class DashboardScreen extends StatelessWidget {
                       size: 24,
                     ),
                     trailing: CustomText(
-                      text: "30",
+                      text: userProvider.productsByRestaurant.length.toString(),
                       size: 24,
                       weight: FontWeight.bold,
                     )),
               ),
             ),
-          )
+          ),
 
-          // products
-//              Column(
-//                children: productProvider.productsByRestaurant
-//                    .map((item) => GestureDetector(
-//                  onTap: () {
-//                    changeScreen(context, Details(product: item,));
-//                  },
-//                  child: ProductWidget(
-//                    product: item,
-//                  ),
-//                ))
-//                    .toList(),
-//              )
+          //products
+          Column(
+            children: userProvider.productsByRestaurant == null
+                ? [GestureDetector(child: Text("no products"))]
+                : userProvider.productsByRestaurant
+                    .map((item) => GestureDetector(
+                          onTap: () {
+                            // changeScreen(
+                            //     context,
+                            //     Details(
+                            //       product: item,
+                            //     ));
+                          },
+                          child: ProductWidget(
+                            product: item,
+                          ),
+                        ))
+                    .toList(),
+          )
         ],
       )),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          changeScreen(context, AddProductScreen());
+        },
+        child: Icon(Icons.add),
+        backgroundColor: primary,
+        tooltip: 'Add Product',
+      ),
     );
   }
 

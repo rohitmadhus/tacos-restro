@@ -23,9 +23,10 @@ class OrderServices {
     });
   }
 
-  Future<List<OrderModel>> getUserOrders({String userId}) async => _firestore
+  Future<List<OrderModel>> getRestaurantOrders({String restaurantId}) async =>
+      _firestore
           .collection(collection)
-          .where("userId", isEqualTo: userId)
+          .where("restaurantIds", arrayContains: restaurantId)
           .getDocuments()
           .then((result) {
         List<OrderModel> orders = [];
