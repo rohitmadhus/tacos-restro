@@ -24,16 +24,22 @@ class UserProvider with ChangeNotifier {
   ProductServices _productServices = ProductServices();
 
   int _totalSales = 0;
+  double _avgPrice = 0;
+  double _restaurantRating = 0;
   RestaurantModel _restaurant;
   List<ProductModel> productsByRestaurant = [];
+
 //  getter
   Status get status => _status;
   FirebaseUser get user => _user;
   RestaurantModel get restaurant => _restaurant;
   int get totalSales => _totalSales;
+  double get avgPrice => _avgPrice;
+  double get restaurantRating => _restaurantRating;
 
   // public variables
   List<OrderModel> orders = [];
+  List<CartItemModel> cartItems = [];
 
   final formkey = GlobalKey<FormState>();
 
@@ -103,6 +109,11 @@ class UserProvider with ChangeNotifier {
 
   Future<void> reload() async {
     _restaurant = await _restaurantServices.getRestaurantById(id: user.uid);
+    await loadProductsByRestaurant(restaurantId: user.uid);
+    await getOrders();
+    await getTotalSales();
+    await getAvgPrice();
+    await getRating();
     notifyListeners();
   }
 
@@ -114,9 +125,11 @@ class UserProvider with ChangeNotifier {
       _status = Status.Authenticated;
 
       await loadProductsByRestaurant(restaurantId: user.uid);
+      _restaurant = await _restaurantServices.getRestaurantById(id: user.uid);
       await getOrders();
       await getTotalSales();
-      _restaurant = await _restaurantServices.getRestaurantById(id: user.uid);
+      await getAvgPrice();
+      await getRating();
     }
     notifyListeners();
   }
@@ -131,8 +144,29 @@ class UserProvider with ChangeNotifier {
       for (CartItemModel item in order.cart) {
         if (item.restaurantId == user.uid) {
           _totalSales = _totalSales + item.totalRestaurantSale;
+          cartItems.add(item);
         }
       }
+    }
+    notifyListeners();
+  }
+
+  getAvgPrice() async {
+    if (productsByRestaurant.length != 0) {
+      int amountSum = 0;
+      for (ProductModel product in productsByRestaurant) {
+        amountSum = amountSum + product.price.floor();
+      }
+      _avgPrice = amountSum / productsByRestaurant.length;
+    }
+    notifyListeners();
+  }
+
+  getRating() async {
+    if (_restaurant.rates != 0) {
+      _restaurantRating = (restaurant.rating / restaurant.rates);
+    } else {
+      _restaurantRating = 0;
     }
     notifyListeners();
   }

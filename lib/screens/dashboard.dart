@@ -5,10 +5,11 @@ import 'package:restro/helpers/style.dart';
 import 'package:restro/providers/product.dart';
 import 'package:restro/providers/user.dart';
 import 'package:restro/screens/addProduct.dart';
+import 'package:restro/screens/orders.dart';
 import 'package:restro/widgets/custom_text.dart';
+import 'package:restro/widgets/imagePlaceHolder.dart';
 import 'package:restro/widgets/product.dart';
 import 'package:restro/widgets/small_floating_button.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key key}) : super(key: key);
@@ -36,13 +37,13 @@ class DashboardScreen extends StatelessWidget {
             UserAccountsDrawerHeader(
               decoration: BoxDecoration(color: primary),
               accountName: CustomText(
-                text: userProvider.restaurant.name,
+                text: userProvider.restaurant?.name ?? "",
                 color: white,
                 weight: FontWeight.bold,
                 size: 18,
               ),
               accountEmail: CustomText(
-                text: userProvider.user.email,
+                text: userProvider.user.email ?? "",
                 color: white,
               ),
             ),
@@ -77,7 +78,7 @@ class DashboardScreen extends StatelessWidget {
                     bottomLeft: Radius.circular(2),
                     bottomRight: Radius.circular(2),
                   ),
-                  child: imageWidget(hasImage: hasImage)),
+                  child: ImagePlaceHolderWidget(hasImage: hasImage)),
 
               // fading black
               Container(
@@ -109,7 +110,7 @@ class DashboardScreen extends StatelessWidget {
                   child: Align(
                       alignment: Alignment.bottomLeft,
                       child: CustomText(
-                        text: userProvider.restaurant.name,
+                        text: userProvider.restaurant?.name ?? "",
                         color: white,
                         size: 24,
                         weight: FontWeight.normal,
@@ -122,8 +123,7 @@ class DashboardScreen extends StatelessWidget {
                   child: Align(
                       alignment: Alignment.bottomLeft,
                       child: CustomText(
-                        text:
-                            "Average Price: ₹${userProvider.restaurant.avgPrice}",
+                        text: "Average Price: ₹${userProvider.avgPrice}",
                         color: white,
                         size: 16,
                         weight: FontWeight.w300,
@@ -297,36 +297,78 @@ class DashboardScreen extends StatelessWidget {
         backgroundColor: primary,
         tooltip: 'Add Product',
       ),
-    );
-  }
-
-  Widget imageWidget({bool hasImage, String url}) {
-    if (hasImage)
-      return FadeInImage.memoryNetwork(
-        placeholder: kTransparentImage,
-        image: url,
-        height: 160,
-        fit: BoxFit.fill,
-        width: double.infinity,
-      );
-
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(
-                Icons.camera_alt,
-                size: 40,
-              ),
-            ],
-          ),
-          CustomText(text: "No Photo")
-        ],
+      bottomNavigationBar: Container(
+        height: 55,
+        color: white,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(10, 1, 10, 1),
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                GestureDetector(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: <Widget>[
+                        Icon(Icons.home),
+                        Text(
+                          "Home",
+                          style: TextStyle(fontSize: 10),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    changeScreen(context, OrderScreen());
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: <Widget>[
+                        Icon(Icons.date_range),
+                        Text(
+                          "Orders",
+                          style: TextStyle(fontSize: 10),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () async {},
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: <Widget>[
+                        Icon(Icons.shopping_cart),
+                        Text(
+                          "Cart",
+                          style: TextStyle(fontSize: 10),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () async {},
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: <Widget>[
+                        Icon(Icons.person),
+                        Text(
+                          "Profile",
+                          style: TextStyle(fontSize: 10),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ]),
+        ),
       ),
-      height: 160,
     );
   }
 }

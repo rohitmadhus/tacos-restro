@@ -5,6 +5,7 @@ class ProductServices {
   String collection = "products";
   Firestore _firestore = Firestore.instance;
 
+  // ignore: missing_return
   Future createProduct({Map data}) {
     _firestore.collection(collection).document(data['id']).setData({
       "id": data["id"],
@@ -19,6 +20,10 @@ class ProductServices {
       "featured": data["featured"],
       "name": data["name"]
     });
+  }
+
+  void removeProduct({String id}) {
+    _firestore.collection(collection).document(id).delete();
   }
 
   Future<List<ProductModel>> getProducts() async =>

@@ -293,6 +293,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             ));
                             userProvider.loadProductsByRestaurant(
                                 restaurantId: userProvider.restaurant.id);
+                            await userProvider.reload();
                             app.changeLoading();
                             return;
                           }

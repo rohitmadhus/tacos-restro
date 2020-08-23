@@ -15,7 +15,7 @@ class ProductWidget extends StatelessWidget {
 //    final productProvider = Provider.of<ProductProvider>(context);
 
     return Padding(
-      padding: const EdgeInsets.only(left: 4, right: 4, top: 4, bottom: 10),
+      padding: const EdgeInsets.only(left: 15, right: 15, top: 2, bottom: 2),
       child: Container(
         height: 110,
         decoration: BoxDecoration(
@@ -83,35 +83,6 @@ class ProductWidget extends StatelessWidget {
                   SizedBox(
                     height: 25,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4),
-                    child: Row(
-                      children: <Widget>[
-                        CustomText(
-                          text: "from: ",
-                          color: grey,
-                          weight: FontWeight.w300,
-                          size: 14,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        GestureDetector(
-                            onTap: () async {
-//                              await productProvider.loadProductsByRestaurant(
-//                                  restaurantId: product.restaurantId);
-//                              await restaurantProvider.loadSingleRestaurant(retaurantId: product.restaurantId);
-//                              changeScreen(context, RestaurantScreen(restaurantModel: restaurantProvider.restaurant,));
-                            },
-                            child: CustomText(
-                              text: product.restaurant,
-                              color: primary,
-                              weight: FontWeight.w300,
-                              size: 14,
-                            )),
-                      ],
-                    ),
-                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -161,6 +132,10 @@ class ProductWidget extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [Icon(Icons.delete)],
             )
           ],
         ),

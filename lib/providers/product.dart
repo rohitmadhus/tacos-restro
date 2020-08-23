@@ -123,6 +123,16 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> removeProduct({String id}) async {
+    try {
+      _productServices.removeProduct(id: id);
+      return true;
+    } catch (e) {
+      print(e.toString());
+      return false;
+    }
+  }
+
   clear() {
     productImage = null;
     productImageName = null;
