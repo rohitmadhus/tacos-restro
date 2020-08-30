@@ -188,4 +188,9 @@ class UserProvider with ChangeNotifier {
         await _productServices.getProductsByRestaurant(id: restaurantId);
     notifyListeners();
   }
+
+  Future changeStatus({String orderId, String status}) async {
+    await _orderServices.changeStatus(orderId: orderId, status: status);
+    await getOrders();
+  }
 }

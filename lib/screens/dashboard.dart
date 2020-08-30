@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restro/helpers/screen_navigation.dart';
 import 'package:restro/helpers/style.dart';
-import 'package:restro/providers/product.dart';
 import 'package:restro/providers/user.dart';
 import 'package:restro/screens/addProduct.dart';
 import 'package:restro/screens/orders.dart';
@@ -16,15 +15,14 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final productProvider = Provider.of<ProductProvider>(context);
     final userProvider = Provider.of<UserProvider>(context);
     bool hasImage = false;
 
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: white),
+        iconTheme: IconThemeData(color: black),
         elevation: 0.5,
-        backgroundColor: primary,
+        backgroundColor: white,
         title: CustomText(
           text: "Sales: ₹${userProvider.totalSales}",
           color: white,
@@ -75,8 +73,8 @@ class DashboardScreen extends StatelessWidget {
               // restaurant image
               ClipRRect(
                   borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(2),
-                    bottomRight: Radius.circular(2),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
                   ),
                   child: ImagePlaceHolderWidget(hasImage: hasImage)),
 
@@ -85,8 +83,8 @@ class DashboardScreen extends StatelessWidget {
                 height: 160,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(2),
-                      bottomRight: Radius.circular(2),
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10),
                     ),
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter,
@@ -105,31 +103,31 @@ class DashboardScreen extends StatelessWidget {
 
               //restaurant name
               Positioned.fill(
-                  bottom: 30,
-                  left: 10,
+                  bottom: 40,
+                  left: 20,
                   child: Align(
                       alignment: Alignment.bottomLeft,
                       child: CustomText(
                         text: userProvider.restaurant?.name ?? "",
                         color: white,
-                        size: 24,
-                        weight: FontWeight.normal,
+                        size: 20,
+                        weight: FontWeight.bold,
                       ))),
 
               // average price
               Positioned.fill(
-                  bottom: 10,
-                  left: 10,
+                  bottom: 20,
+                  left: 20,
                   child: Align(
                       alignment: Alignment.bottomLeft,
                       child: CustomText(
-                        text: "Average Price: ₹${userProvider.avgPrice}",
+                        text: "Average Price: ₹ ${userProvider.avgPrice}",
                         color: white,
-                        size: 16,
+                        size: 15,
                         weight: FontWeight.w300,
                       ))),
 
-              // close button
+              // Edit button
               Positioned.fill(
                   top: 5,
                   child: Align(
@@ -155,7 +153,7 @@ class DashboardScreen extends StatelessWidget {
                       ),
                     ),
                   )),
-
+              // rating
               Positioned.fill(
                   bottom: 2,
                   child: Align(
@@ -203,15 +201,14 @@ class DashboardScreen extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.fromLTRB(15, 2, 15, 2),
             child: Padding(
               padding: const EdgeInsets.all(4),
               child: Container(
                 decoration: BoxDecoration(
                     color: white,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
                           color: Colors.grey[300],
@@ -224,26 +221,27 @@ class DashboardScreen extends StatelessWidget {
                       child: Image.asset("images/delivery.png"),
                     ),
                     title: CustomText(
-                      text: "Orders",
-                      size: 24,
+                      text: "Orders To Approve",
+                      size: 20,
                     ),
                     trailing: CustomText(
                       text: userProvider.orders.length.toString(),
-                      size: 24,
+                      size: 20,
                       weight: FontWeight.bold,
+                      color: red,
                     )),
               ),
             ),
           ),
 
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.fromLTRB(15, 2, 15, 2),
             child: Padding(
               padding: const EdgeInsets.all(4),
               child: Container(
                 decoration: BoxDecoration(
                     color: white,
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
                           color: Colors.grey[300],
@@ -257,11 +255,11 @@ class DashboardScreen extends StatelessWidget {
                     ),
                     title: CustomText(
                       text: "Total Food",
-                      size: 24,
+                      size: 20,
                     ),
                     trailing: CustomText(
                       text: userProvider.productsByRestaurant.length.toString(),
-                      size: 24,
+                      size: 20,
                       weight: FontWeight.bold,
                     )),
               ),

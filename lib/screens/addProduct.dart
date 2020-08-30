@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:restro/helpers/screen_navigation.dart';
 import 'package:restro/helpers/style.dart';
 import 'package:restro/providers/app.dart';
 import 'package:restro/providers/category.dart';
 import 'package:restro/providers/product.dart';
 import 'package:restro/providers/user.dart';
+import 'package:restro/screens/dashboard.dart';
 import 'package:restro/widgets/customFileButton.dart';
 import 'package:restro/widgets/custom_text.dart';
 import 'package:restro/widgets/loading.dart';
@@ -297,12 +299,16 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             app.changeLoading();
                             return;
                           }
+                          userProvider.loadProductsByRestaurant(
+                              restaurantId: userProvider.restaurant.id);
+                          await userProvider.reload();
                           productProvider.clear();
                           _key.currentState.showSnackBar(SnackBar(
                             content: Text("Upload Success"),
-                            duration: const Duration(seconds: 5),
+                            duration: const Duration(seconds: 2),
                           ));
                           app.changeLoading();
+                          Navigator.pop(context);
                         },
                         child: CustomText(
                           text: "Upload Product",

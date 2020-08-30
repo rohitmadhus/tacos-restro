@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:restro/helpers/style.dart';
 import 'package:restro/models/product.dart';
+import 'package:restro/providers/app.dart';
+import 'package:restro/providers/product.dart';
+import 'package:restro/providers/user.dart';
+import 'package:restro/widgets/loading.dart';
 
 import 'custom_text.dart';
 
@@ -11,16 +16,17 @@ class ProductWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-//    final restaurantProvider = Provider.of<RestaurantProvider>(context);
-//    final productProvider = Provider.of<ProductProvider>(context);
+    final productProvider = Provider.of<ProductProvider>(context);
+    final app = Provider.of<AppProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
 
     return Padding(
       padding: const EdgeInsets.only(left: 15, right: 15, top: 2, bottom: 2),
       child: Container(
-        height: 110,
+        height: 90,
         decoration: BoxDecoration(
             color: white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(5),
             boxShadow: [
               BoxShadow(
                   color: Colors.grey[300],
@@ -31,101 +37,60 @@ class ProductWidget extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Container(
-              width: 140,
-              height: 120,
+              width: 90,
+              height: 90,
               child: ClipRRect(
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  topLeft: Radius.circular(20),
+                  bottomLeft: Radius.circular(5),
+                  topLeft: Radius.circular(5),
                 ),
-                child: Image.network(
-                  product.image,
-                  fit: BoxFit.fill,
-                ),
+                child: app.isLoading
+                    ? Loading()
+                    : Image.network(
+                        product.image,
+                        fit: BoxFit.fill,
+                      ),
               ),
             ),
             Expanded(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.fromLTRB(8, 6, 0, 2),
                         child: CustomText(
                           text: product.name,
+                          size: 18,
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: white,
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.grey[300],
-                                    offset: Offset(1, 1),
-                                    blurRadius: 4),
-                              ]),
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Icon(
-                              Icons.favorite_border,
-                              color: red,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                      )
                     ],
-                  ),
-                  SizedBox(
-                    height: 25,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: CustomText(
-                              text: product.rating.toString(),
-                              color: grey,
-                              size: 14.0,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Icon(
-                            Icons.star,
-                            color: red,
-                            size: 16,
-                          ),
-                          Icon(
-                            Icons.star,
-                            color: red,
-                            size: 16,
-                          ),
-                          Icon(
-                            Icons.star,
-                            color: red,
-                            size: 16,
-                          ),
-                          Icon(
-                            Icons.star,
-                            color: grey,
-                            size: 16,
-                          ),
-                        ],
-                      ),
                       Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
+                        padding: const EdgeInsets.fromLTRB(8, 2, 0, 2),
                         child: CustomText(
-                          text: "\$${product.price}",
+                          text: product.category,
+                          weight: FontWeight.w300,
+                          size: 15,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 2, 0, 6),
+                        child: CustomText(
+                          text: "₹ ${product.price}",
                           weight: FontWeight.bold,
+                          size: 15,
+                          color: red,
                         ),
                       ),
                     ],
@@ -133,9 +98,103 @@ class ProductWidget extends StatelessWidget {
                 ],
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [Icon(Icons.delete)],
+            GestureDetector(
+              onTap: () async {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(20.0)), //this right here
+                        child: Container(
+                          height: 200,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Do u want to delete',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                    ]),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      product.name,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 200.0,
+                                      child: RaisedButton(
+                                        onPressed: () async {
+                                          app.changeLoading();
+                                          await productProvider.removeProduct(
+                                              id: product.id,
+                                              imageUrl: product.image);
+                                          await userProvider.reload();
+                                          app.changeLoading();
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          "Confirm",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 200.0,
+                                      child: RaisedButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          "Close",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    });
+              },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [Icon(Icons.delete)],
+                ),
+              ),
             )
           ],
         ),

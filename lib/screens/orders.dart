@@ -31,7 +31,7 @@ class _OrderScreenState extends State<OrderScreen> {
             List<OrderModel> orders = userProvider.orders;
             return GestureDetector(
               onTap: () {
-                if (true) {
+                if (userProvider.orders[index].status == "complete") {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -67,7 +67,11 @@ class _OrderScreenState extends State<OrderScreen> {
                                     SizedBox(
                                       width: 320.0,
                                       child: RaisedButton(
-                                        onPressed: () {
+                                        onPressed: () async {
+                                          await userProvider.changeStatus(
+                                              orderId:
+                                                  userProvider.orders[index].id,
+                                              status: "Confirmed");
                                           Navigator.pop(context);
                                         },
                                         child: Text(
@@ -80,7 +84,11 @@ class _OrderScreenState extends State<OrderScreen> {
                                     SizedBox(
                                       width: 320.0,
                                       child: RaisedButton(
-                                        onPressed: () {
+                                        onPressed: () async {
+                                          await userProvider.changeStatus(
+                                              orderId:
+                                                  userProvider.orders[index].id,
+                                              status: "Canceled");
                                           Navigator.pop(context);
                                         },
                                         child: Text(

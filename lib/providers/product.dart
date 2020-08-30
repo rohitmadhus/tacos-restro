@@ -96,6 +96,17 @@ class ProductProvider with ChangeNotifier {
     return imageUrl;
   }
 
+  Future _deleteFromFirebase({String imageUrl}) async {
+    if (imageUrl != null) {
+      StorageReference storageReference =
+          await FirebaseStorage.instance.getReferenceFromUrl(imageUrl);
+      await storageReference.delete();
+      return "deleted";
+    } else {
+      return "not deleted";
+    }
+  }
+
   Future<bool> uploadProduct(
       {String category, String restaurant, String restaurantId}) async {
     try {
@@ -123,9 +134,10 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> removeProduct({String id}) async {
+  Future<bool> removeProduct({String id, String imageUrl}) async {
     try {
       _productServices.removeProduct(id: id);
+      _deleteFromFirebase(imageUrl: imageUrl);
       return true;
     } catch (e) {
       print(e.toString());

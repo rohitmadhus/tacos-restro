@@ -35,4 +35,13 @@ class OrderServices {
         }
         return orders;
       });
+
+  Future changeStatus({String orderId, String status}) async {
+    _firestore
+        .collection(collection)
+        .document(orderId)
+        .updateData({"status": status}).then((value) {
+      print("Status Updated");
+    });
+  }
 }
