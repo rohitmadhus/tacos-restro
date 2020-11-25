@@ -1,6 +1,5 @@
 # restro
-
-A new Flutter project.
+Restaurant side app
 
 ## Getting Started
 
